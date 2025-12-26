@@ -1,0 +1,181 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Comparer</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    {% csrf_token %}
+    <div class="app">
+        <header class="header">
+            <h1>Document Comparer</h1>
+            <p>Upload two documents to see what changed between them</p>
+        </header>
+
+        <main class="main">
+            <section class="upload-section">
+                <h2 class="section-title">
+                    <span class="step-number">1</span>
+                    Select Your Documents
+                </h2>
+
+                <div class="upload-grid">
+                    <div class="drop-zone" id="drop_zone_a">
+                        <input type="file" id="file_a" accept=".pdf,.docx" class="file-input">
+                        <div class="drop-zone-content">
+                            <div class="drop-zone-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                            </div>
+                            <div class="drop-zone-label">Original Document</div>
+                            <div class="drop-zone-hint">Drag & drop or click to browse</div>
+                            <div class="drop-zone-formats">PDF, DOCX</div>
+                        </div>
+                        <div class="drop-zone-selected">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            <span class="file-name" id="file_name_a"></span>
+                            <span class="file-size" id="file_size_a"></span>
+                            <button type="button" class="remove-file" id="remove_a" title="Remove file">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="upload-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </div>
+
+                    <div class="drop-zone" id="drop_zone_b">
+                        <input type="file" id="file_b" accept=".pdf,.docx" class="file-input">
+                        <div class="drop-zone-content">
+                            <div class="drop-zone-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                            </div>
+                            <div class="drop-zone-label">Modified Document</div>
+                            <div class="drop-zone-hint">Drag & drop or click to browse</div>
+                            <div class="drop-zone-formats">PDF, DOCX</div>
+                        </div>
+                        <div class="drop-zone-selected">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            <span class="file-name" id="file_name_b"></span>
+                            <span class="file-size" id="file_size_b"></span>
+                            <button type="button" class="remove-file" id="remove_b" title="Remove file">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="compare_btn" class="btn-compare" disabled>
+                    <span class="btn-text">Compare Documents</span>
+                    <span class="btn-loading"><span class="spinner"></span>Analyzing...</span>
+                </button>
+                <p class="compare-hint" id="compare_hint">Select both documents to enable comparison</p>
+            </section>
+
+            <div id="error" class="error-message" hidden>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span id="error_text"></span>
+            </div>
+
+            <section id="results_section" class="results-section" hidden>
+                <h2 class="section-title">
+                    <span class="step-number">2</span>
+                    Review Changes
+                </h2>
+
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <span class="toolbar-label">Show:</span>
+                        <div class="filter-group">
+                            <label class="filter-chip filter-unchanged">
+                                <input type="checkbox" class="filter-cb" value="unchanged" checked>
+                                <span class="chip-text">Unchanged</span>
+                                <span class="chip-count" id="count_unchanged">0</span>
+                            </label>
+                            <label class="filter-chip filter-added">
+                                <input type="checkbox" class="filter-cb" value="added" checked>
+                                <span class="chip-text">Added</span>
+                                <span class="chip-count" id="count_added">0</span>
+                            </label>
+                            <label class="filter-chip filter-removed">
+                                <input type="checkbox" class="filter-cb" value="removed" checked>
+                                <span class="chip-text">Removed</span>
+                                <span class="chip-count" id="count_removed">0</span>
+                            </label>
+                            <label class="filter-chip filter-modified">
+                                <input type="checkbox" class="filter-cb" value="modified" checked>
+                                <span class="chip-text">Modified</span>
+                                <span class="chip-count" id="count_modified">0</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="toolbar-right">
+                        <button type="button" id="export_btn" class="btn-secondary" title="Download as HTML file">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Export
+                        </button>
+                    </div>
+                </div>
+
+                <div id="results" class="results"></div>
+
+                <div class="keyboard-hint">
+                    <span>Tip: Use</span>
+                    <kbd>↑</kbd><kbd>↓</kbd>
+                    <span>or</span>
+                    <kbd>J</kbd><kbd>K</kbd>
+                    <span>to navigate between changes</span>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="floating_nav" class="floating-nav" hidden>
+        <button type="button" id="prev_btn" class="btn-icon" title="Previous change (↑ or K)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+        </button>
+        <span id="position" class="position-indicator">0 of 0</span>
+        <button type="button" id="next_btn" class="btn-icon" title="Next change (↓ or J)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>
