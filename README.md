@@ -19,8 +19,14 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-Open http://localhost:8000 in your browser.
+Open http://localhost:8000
 
-Once opened. Add a "/api/" at the end 
+## Production
 
-http://localhost:8000/api/
+Configure the following environment variables:
+
+| Variable | Description |
+|----------|-------------|
+| `DJANGO_SECRET_KEY` | Secret key for cryptographic signing |
+| `DJANGO_DEBUG` | Set to `False` in production |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated list of allowed hosts |

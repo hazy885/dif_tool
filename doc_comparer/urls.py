@@ -3,5 +3,5 @@ from . import views
 
 urlpatterns = [
     path('compare/', views.compare_documents, name='compare'),
-    path('', views.index, name='index')
+    path('', views.index, name='index'),
 ]

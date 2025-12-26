@@ -216,15 +216,23 @@
         els.countRemoved.textContent = counts.removed;
         els.countModified.textContent = counts.modified;
 
+        var hasChanges = counts.added + counts.removed + counts.modified > 0;
+
         var html = '<div class="diff-headers">' +
             '<div class="diff-title">' + esc(data.document_a.name) + '</div>' +
             '<div class="diff-title">' + esc(data.document_b.name) + '</div></div>';
 
-        data.diff.forEach(function(d) {
-            html += '<div class="diff-item diff-' + d.status + '">' +
-                '<div class="diff-cell"><p>' + formatText(d.text_a, d.status, 'a') + '</p></div>' +
-                '<div class="diff-cell"><p>' + formatText(d.text_b, d.status, 'b') + '</p></div></div>';
-        });
+        if (!hasChanges && counts.unchanged === 0) {
+            html += '<div class="empty-state"><p>No text content found in the documents.</p></div>';
+        } else if (!hasChanges) {
+            html += '<div class="empty-state"><div class="empty-icon">✓</div><p>Documents are identical</p><span>' + counts.unchanged + ' paragraphs compared</span></div>';
+        } else {
+            data.diff.forEach(function(d) {
+                html += '<div class="diff-item diff-' + d.status + '">' +
+                    '<div class="diff-cell"><p>' + formatText(d.text_a, d.status, 'a') + '</p></div>' +
+                    '<div class="diff-cell"><p>' + formatText(d.text_b, d.status, 'b') + '</p></div></div>';
+            });
+        }
 
         els.resultsContainer.innerHTML = html;
     }

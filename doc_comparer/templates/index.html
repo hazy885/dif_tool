@@ -4,7 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Compare PDF and DOCX documents to see what changed between versions. Free, fast, and private.">
+    <meta name="theme-color" content="#3b82f6">
+    <meta property="og:title" content="Document Comparer">
+    <meta property="og:description" content="Compare PDF and DOCX documents to see what changed between versions.">
+    <meta property="og:type" content="website">
     <title>Document Comparer</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='10' y='10' width='35' height='45' rx='4' fill='%233b82f6'/><rect x='55' y='45' width='35' height='45' rx='4' fill='%2322c55e'/><path d='M45 50 L55 50 M50 45 L50 55' stroke='%23666' stroke-width='4' stroke-linecap='round'/></svg>">
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
@@ -160,6 +166,10 @@
                 </div>
             </section>
         </main>
+
+        <footer class="footer">
+            <p>Document Comparer v1.0 &middot; Files are processed locally and never stored</p>
+        </footer>
     </div>
 
     <div id="floating_nav" class="floating-nav" hidden>
